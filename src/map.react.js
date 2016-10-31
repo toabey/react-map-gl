@@ -131,6 +131,14 @@ const PROP_TYPES = {
   onClickFeatures: PropTypes.func,
 
   /**
+   * added by abey to take custom added features
+   */
+  onCustomClickFeatures:PropTypes.func,
+
+  overlayLayer:PropTypes.string,
+
+
+  /**
     * Radius to detect features around a clicked point. Defaults to 15.
     */
   clickRadius: PropTypes.number,
@@ -226,6 +234,10 @@ export default class MapGL extends Component {
       // TODO?
       // attributionControl: this.props.attributionControl
     });
+
+    map.addControl(new mapboxgl.ScaleControl({position: 'bottom-left'}));
+    map.addControl(new mapboxgl.NavigationControl());
+    map.addControl(new mapboxgl.GeolocateControl());
 
     select(map.getCanvas()).style('outline', 'none');
 
@@ -414,7 +426,9 @@ export default class MapGL extends Component {
       newProps.zoom !== oldProps.zoom ||
       newProps.pitch !== oldProps.pitch ||
       newProps.zoom !== oldProps.bearing ||
-      newProps.altitude !== oldProps.altitude;
+      newProps.altitude !== oldProps.altitude
+    newProps.overlayLayer!== oldProps.overlayLayer
+    ;
 
     const map = this._getMap();
 
@@ -597,21 +611,35 @@ export default class MapGL extends Component {
   }
 
   @autobind _onMouseClick(opt) {
-    if (!this.props.onClickFeatures) {
+    if (!this.props.onClickFeatures && !this.props.onCustomClickFeatures) {
       return;
     }
+    if(this.props.onClickFeatures) {
 
-    const map = this._getMap();
-    const pos = opt.pos;
+      const map = this._getMap();
+      const pos = opt.pos;
 
-    // Radius enables point features, like marker symbols, to be clicked.
-    const size = this.props.clickRadius;
-    const bbox = [[pos.x - size, pos.y - size], [pos.x + size, pos.y + size]];
-    const features = map.queryRenderedFeatures(bbox, this._queryParams);
-    if (!features.length && this.props.ignoreEmptyFeatures) {
-      return;
+      // Radius enables point features, like marker symbols, to be clicked.
+      const size = this.props.clickRadius;
+      const bbox = [[pos.x - size, pos.y - size], [pos.x + size, pos.y + size]];
+      const features = map.queryRenderedFeatures(bbox, this._queryParams);
+      if (!features.length && this.props.ignoreEmptyFeatures) {
+        return;
+      }
+      this.props.onClickFeatures(features);
+
     }
-    this.props.onClickFeatures(features);
+    if(this.props.onCustomClickFeatures) {
+
+      const map = this._getMap();
+      const pos = opt.pos;
+
+      // Radius enables point features, like marker symbols, to be clicked.
+      const size = this.props.clickRadius;
+      const bbox = [[pos.x - size, pos.y - size], [pos.x + size, pos.y + size]];
+
+      this.props.onCustomClickFeatures(pos,bbox);
+    }
   }
 
   @autobind _onZoom({pos, scale}) {
