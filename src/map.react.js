@@ -132,6 +132,7 @@ const PROP_TYPES = {
 
   /**
    * added by abey to take custom added features
+   * 
    */
   onCustomClickFeatures:PropTypes.func,
 
