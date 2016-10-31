@@ -117,7 +117,7 @@ export default class ScatterplotOverlay extends Component {
           width: `${width}px`,
           height: `${height}px`,
           position: 'absolute',
-          pointerEvents: 'none',
+          pointerEvents: 'auto',
           opacity: globalOpacity,
           left: 0,
           top: 0
