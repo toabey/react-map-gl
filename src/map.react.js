@@ -132,11 +132,13 @@ const PROP_TYPES = {
 
   /**
    * added by abey to take custom added features
-   * 
+   *
    */
   onCustomClickFeatures:PropTypes.func,
 
   overlayLayer:PropTypes.string,
+
+  maxZoom:PropTypes.number,
 
 
   /**
@@ -227,6 +229,7 @@ export default class MapGL extends Component {
       container: this.refs.mapboxMap,
       center: [this.props.longitude, this.props.latitude],
       zoom: this.props.zoom,
+      maxZoom:this.props.maxZoom,
       pitch: this.props.pitch,
       bearing: this.props.bearing,
       style: mapStyle,
@@ -237,7 +240,6 @@ export default class MapGL extends Component {
     });
 
     map.addControl(new mapboxgl.ScaleControl({position: 'bottom-left'}));
-    map.addControl(new mapboxgl.NavigationControl());
     map.addControl(new mapboxgl.GeolocateControl());
 
     select(map.getCanvas()).style('outline', 'none');
